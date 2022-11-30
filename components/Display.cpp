@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <ncurses.h>
 #include "Display.h"
 
 
@@ -12,21 +13,6 @@ void Display::clearScreen() {
             display[y][x] = 0b0;
         }
     }
-}
-
-// TODO: use actual graphics like SDL or actual console graphics
-void Display::printScreen() {
-    for(unsigned char y = 0; y < height; y++) {
-        for (unsigned char x = 0; x < width; x++) {
-            std::cout << (display[y][x] ? "#" : ".");
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
 }
 
 void Display::printScreenSDL() {
@@ -62,6 +48,12 @@ void Display::printScreenSDL() {
     SDL_RenderPresent(renderer);
 }
 
+void Display::printDebugInfo() {
+    move(10, 20);
+    printw("Hello there, General Kenobi");
+    refresh();
+}
+
 bool Display::getPixel(unsigned char x, unsigned char y) {
     return display[y][x];
 }
@@ -79,6 +71,10 @@ bool Display::getCollisionBottom(unsigned char y) {
 }
 
 Display::Display() {
+    // init ncurses
+    initscr();
+
+    // init SDL
     SDL_Init(SDL_INIT_VIDEO);
     window = SDL_CreateWindow("chip8", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width * gridSize, height * gridSize, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_SOFTWARE);
@@ -91,4 +87,6 @@ Display::~Display() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
+    endwin();
 }

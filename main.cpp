@@ -6,8 +6,8 @@
 // TODO: Framed MK1 and MK2 not working -> maybe random ist bugged
 // TODO: Jumping X and O -> Segfault
 
-int main() {
+int main(int argc, char* argv[]) {
     CPU cpu;
-    cpu.loadProgram("./roms/games/Nim [Carmelo Cortez, 1978].ch8");
+    cpu.loadProgram(argv[1]); // TODO: argument validation
     return cpu.run();
 }

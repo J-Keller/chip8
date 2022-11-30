@@ -14,8 +14,8 @@ public:
     ~Display();
 
     void clearScreen();
-    void printScreen();
     void printScreenSDL();
+    void printDebugInfo();
     bool getPixel(unsigned char, unsigned char);
     void setPixel(unsigned char, unsigned char, bool);
     bool getCollisionRight(unsigned char);

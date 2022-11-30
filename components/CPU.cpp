@@ -16,8 +16,9 @@ void CPU::loadProgram(std::string filepath) {
     std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(program), {});
 
     memory.write(buffer, 0x200);
-    memory.printMemory();
+    //memory.printMemory();
     display.printScreenSDL();
+    display.printDebugInfo();
 
 }
 
@@ -40,6 +41,7 @@ void CPU::runSoundTimer() {
 }
 
 int CPU::run() {
+    display.printDebugInfo();
     // start timers
     std::thread delay(&CPU::runDelayTimer, this);
     std::thread sound(&CPU::runSoundTimer, this);
@@ -69,7 +71,6 @@ int CPU::run() {
         }
 
         instruction = memory.readInstruction(pc);
-        //std::cout << std::hex << instruction << std::endl;
 
         pc += 2;
         opcode = (unsigned char)(instruction >> 12);
