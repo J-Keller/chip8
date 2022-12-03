@@ -19,7 +19,6 @@ private:
     void runDelayTimer();
     void runSoundTimer();
 
-
     Memory memory;
     Display display;
 

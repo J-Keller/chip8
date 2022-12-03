@@ -3,9 +3,46 @@
 //
 
 #include <iostream>
-#include <ncurses.h>
 #include "Display.h"
 
+
+WINDOW *createNewWindow(int width, int height, int xPos, int yPos) {
+    WINDOW *local_win;
+
+    local_win = newwin(height, width, yPos, xPos);
+    box(local_win, 0 , 0);		/* 0, 0 gives default characters
+					             * for the vertical and horizontal
+					             * lines
+					             */
+    wrefresh(local_win);		/* Show that box 		*/
+
+    if(local_win == nullptr) {
+        std::cerr << "window cannot be created" << std::endl;
+    }
+
+    return local_win;
+}
+
+void destroyWindow(WINDOW *window) {
+    /* box(local_win, ' ', ' '); : This won't produce the desired
+	 * result of erasing the window. It will leave it's four corners
+	 * and so an ugly remnant of window.
+	 */
+    wborder(window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
+    /* The parameters taken are
+     * 1. win: the window on which to operate
+     * 2. ls: character to be used for the left side of the window
+     * 3. rs: character to be used for the right side of the window
+     * 4. ts: character to be used for the top side of the window
+     * 5. bs: character to be used for the bottom side of the window
+     * 6. tl: character to be used for the top left corner of the window
+     * 7. tr: character to be used for the top right corner of the window
+     * 8. bl: character to be used for the bottom left corner of the window
+     * 9. br: character to be used for the bottom right corner of the window
+     */
+    wrefresh(window);
+    delwin(window);
+}
 
 void Display::clearScreen() {
     for(unsigned char y = 0; y < height; y++) {
@@ -48,10 +85,33 @@ void Display::printScreenSDL() {
     SDL_RenderPresent(renderer);
 }
 
-void Display::printDebugInfo() {
-    move(10, 20);
-    printw("Hello there, General Kenobi");
-    refresh();
+void Display::initDebugStuff() {
+    // registers
+    unsigned char registerWindowHeight = 10;
+    unsigned char registerWindowWidth = 19;
+    unsigned char registerWindowXPos = 1;
+    unsigned char registerWindowYPos = 1;
+
+    registerWindow = createNewWindow(registerWindowWidth, registerWindowHeight, registerWindowXPos, registerWindowYPos);
+}
+
+void Display::printDebugInfo(unsigned char *registers) {
+    mvwprintw(registerWindow, 0, 0, "registers");
+
+    for (unsigned char registerNr = 0x0; registerNr < 0x8; registerNr++) {
+        mvwprintw(registerWindow, registerNr + 1, 1, "%.2i: 0x%.2x", registerNr, registers[registerNr]);
+    }
+    for (unsigned char registerNr = 0x8; registerNr <= 0xF; registerNr++) {
+        mvwprintw(registerWindow, registerNr - 7, 10, "%.2i: 0x%.2x", registerNr, registers[registerNr]);
+    }
+
+
+    wrefresh(registerWindow);
+
+    // TODO: program code
+    // TODO: program counter
+    // TODO: Memory content
+
 }
 
 bool Display::getPixel(unsigned char x, unsigned char y) {
@@ -73,6 +133,10 @@ bool Display::getCollisionBottom(unsigned char y) {
 Display::Display() {
     // init ncurses
     initscr();
+    cbreak();
+    refresh();
+
+    initDebugStuff();
 
     // init SDL
     SDL_Init(SDL_INIT_VIDEO);
@@ -88,5 +152,7 @@ Display::~Display() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
+    // destroy debug stuff
+    destroyWindow(registerWindow);
     endwin();
 }

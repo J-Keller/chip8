@@ -7,6 +7,8 @@
 
 
 #include <SDL.h>
+#include <ncurses.h>
+
 
 class Display {
 public:
@@ -15,13 +17,18 @@ public:
 
     void clearScreen();
     void printScreenSDL();
-    void printDebugInfo();
+    void printDebugInfo(unsigned char* registers);
     bool getPixel(unsigned char, unsigned char);
     void setPixel(unsigned char, unsigned char, bool);
     bool getCollisionRight(unsigned char);
     bool getCollisionBottom(unsigned char);
 protected:
 private:
+
+    void initDebugStuff();
+
+    // Debug Stuff
+    WINDOW *registerWindow;
 
     // SDL Stuff
     SDL_Window *window;
