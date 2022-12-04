@@ -16,6 +16,9 @@ public:
     unsigned char readByte(unsigned short address);
     unsigned short getFontAddress(unsigned char character);
 
+    // used for debug
+    unsigned char *readMemoryContent();
+
     void printMemory();
 protected:
 private:

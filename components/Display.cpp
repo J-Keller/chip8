@@ -87,31 +87,42 @@ void Display::printScreenSDL() {
 
 void Display::initDebugStuff() {
     // registers
-    unsigned char registerWindowHeight = 10;
     unsigned char registerWindowWidth = 19;
+    unsigned char registerWindowHeight = 10;
     unsigned char registerWindowXPos = 1;
     unsigned char registerWindowYPos = 1;
 
     registerWindow = createNewWindow(registerWindowWidth, registerWindowHeight, registerWindowXPos, registerWindowYPos);
+
+    // ram
+    unsigned short memoryWindowWidth = 130;
+    unsigned char memoryWindowHeight = 66;
+    unsigned char memoryWindowXPos = 1;
+    unsigned char memoryWindowYPos = 12;
+
+    memoryWindow = createNewWindow(memoryWindowWidth, memoryWindowHeight, memoryWindowXPos, memoryWindowYPos);
 }
 
-void Display::printDebugInfo(unsigned char *registers) {
+void Display::printDebugInfo(unsigned char *registers, unsigned char* memory) {
+    // registers
     mvwprintw(registerWindow, 0, 0, "registers");
-
     for (unsigned char registerNr = 0x0; registerNr < 0x8; registerNr++) {
-        mvwprintw(registerWindow, registerNr + 1, 1, "%.2i: 0x%.2x", registerNr, registers[registerNr]);
+        mvwprintw(registerWindow, registerNr + 1, 1, "%.2i: 0x%.2X", registerNr, registers[registerNr]);
     }
     for (unsigned char registerNr = 0x8; registerNr <= 0xF; registerNr++) {
-        mvwprintw(registerWindow, registerNr - 7, 10, "%.2i: 0x%.2x", registerNr, registers[registerNr]);
+        mvwprintw(registerWindow, registerNr - 7, 10, "%.2i: 0x%.2X", registerNr, registers[registerNr]);
     }
-
-
     wrefresh(registerWindow);
+
+    // ram
+    mvwprintw(memoryWindow, 0, 0, "memory");
+    for(unsigned short i; i < 4096; i++) {
+        mvwprintw(memoryWindow, (i / 64) + 1, (i % 64) * 2 + 1, "%.2X", memory[i]);
+    }
+    wrefresh(memoryWindow);
 
     // TODO: program code
     // TODO: program counter
-    // TODO: Memory content
-
 }
 
 bool Display::getPixel(unsigned char x, unsigned char y) {

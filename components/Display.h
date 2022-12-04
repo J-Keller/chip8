@@ -17,7 +17,7 @@ public:
 
     void clearScreen();
     void printScreenSDL();
-    void printDebugInfo(unsigned char* registers);
+    void printDebugInfo(unsigned char* registers, unsigned char* memory);
     bool getPixel(unsigned char, unsigned char);
     void setPixel(unsigned char, unsigned char, bool);
     bool getCollisionRight(unsigned char);
@@ -29,6 +29,7 @@ private:
 
     // Debug Stuff
     WINDOW *registerWindow;
+    WINDOW *memoryWindow;
 
     // SDL Stuff
     SDL_Window *window;
