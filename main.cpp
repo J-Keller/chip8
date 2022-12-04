@@ -3,11 +3,9 @@
 
 
 // TODO: Clock Program -> Input is way to fast, instantly fills all six values
-// TODO: Framed MK1 and MK2 not working -> maybe random ist bugged
 // TODO: Jumping X and O -> Segfault
 
 
-// TODO: add debug flag
 // TODO: Debug add step mode
 int main(int argc, char* argv[]) {
     CPU cpu;

@@ -50,6 +50,9 @@ void Display::initDebugStuff() {
     unsigned char pcWindowYPos = 11;
 
     pcWindow = createNewWindow(pcWindowWidth, pcWindowHeight, pcWindowXPos, pcWindowYPos);
+
+    // TODO: i register
+    // TODO: stack
 }
 
 void Display::printDebugInfo(unsigned char *registers, unsigned char* memory, unsigned short pc) {
