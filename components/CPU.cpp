@@ -18,7 +18,7 @@ void CPU::loadProgram(std::string filepath) {
     memory.write(buffer, 0x200);
     //memory.printMemory();
     display.printScreenSDL();
-    display.printDebugInfo(v, memory.readMemoryContent());
+    display.printDebugInfo(v, memory.readMemoryContent(), pc);
 
 }
 
@@ -266,7 +266,7 @@ int CPU::run() {
                 sound.join();
                 return 1;
         }
-        display.printDebugInfo(v, memory.readMemoryContent());
+        display.printDebugInfo(v, memory.readMemoryContent(), pc);
         std::this_thread::sleep_for(std::chrono::microseconds (3500));
     }
     timersRunning = false;

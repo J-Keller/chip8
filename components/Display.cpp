@@ -10,11 +10,8 @@ WINDOW *createNewWindow(int width, int height, int xPos, int yPos) {
     WINDOW *local_win;
 
     local_win = newwin(height, width, yPos, xPos);
-    box(local_win, 0 , 0);		/* 0, 0 gives default characters
-					             * for the vertical and horizontal
-					             * lines
-					             */
-    wrefresh(local_win);		/* Show that box 		*/
+    box(local_win, 0 , 0);
+    wrefresh(local_win);
 
     if(local_win == nullptr) {
         std::cerr << "window cannot be created" << std::endl;
@@ -24,22 +21,7 @@ WINDOW *createNewWindow(int width, int height, int xPos, int yPos) {
 }
 
 void destroyWindow(WINDOW *window) {
-    /* box(local_win, ' ', ' '); : This won't produce the desired
-	 * result of erasing the window. It will leave it's four corners
-	 * and so an ugly remnant of window.
-	 */
     wborder(window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
-    /* The parameters taken are
-     * 1. win: the window on which to operate
-     * 2. ls: character to be used for the left side of the window
-     * 3. rs: character to be used for the right side of the window
-     * 4. ts: character to be used for the top side of the window
-     * 5. bs: character to be used for the bottom side of the window
-     * 6. tl: character to be used for the top left corner of the window
-     * 7. tr: character to be used for the top right corner of the window
-     * 8. bl: character to be used for the bottom left corner of the window
-     * 9. br: character to be used for the bottom right corner of the window
-     */
     wrefresh(window);
     delwin(window);
 }
@@ -95,15 +77,23 @@ void Display::initDebugStuff() {
     registerWindow = createNewWindow(registerWindowWidth, registerWindowHeight, registerWindowXPos, registerWindowYPos);
 
     // ram
-    unsigned short memoryWindowWidth = 130;
+    unsigned char memoryWindowWidth = 130;
     unsigned char memoryWindowHeight = 66;
-    unsigned char memoryWindowXPos = 1;
-    unsigned char memoryWindowYPos = 12;
+    unsigned char memoryWindowXPos = 20;
+    unsigned char memoryWindowYPos = 1;
 
     memoryWindow = createNewWindow(memoryWindowWidth, memoryWindowHeight, memoryWindowXPos, memoryWindowYPos);
+
+    // pc
+    unsigned char pcWindowWidth = 19;
+    unsigned char pcWindowHeight = 56;
+    unsigned char pcWindowXPos = 1;
+    unsigned char pcWindowYPos = 11;
+
+    pcWindow = createNewWindow(pcWindowWidth, pcWindowHeight, pcWindowXPos, pcWindowYPos);
 }
 
-void Display::printDebugInfo(unsigned char *registers, unsigned char* memory) {
+void Display::printDebugInfo(unsigned char *registers, unsigned char* memory, unsigned short pc) {
     // registers
     mvwprintw(registerWindow, 0, 0, "registers");
     for (unsigned char registerNr = 0x0; registerNr < 0x8; registerNr++) {
@@ -116,13 +106,20 @@ void Display::printDebugInfo(unsigned char *registers, unsigned char* memory) {
 
     // ram
     mvwprintw(memoryWindow, 0, 0, "memory");
-    for(unsigned short i; i < 4096; i++) {
+    for(unsigned short i = 0; i < 4096; i++) {
         mvwprintw(memoryWindow, (i / 64) + 1, (i % 64) * 2 + 1, "%.2X", memory[i]);
     }
     wrefresh(memoryWindow);
 
-    // TODO: program code
-    // TODO: program counter
+    // currently executed code
+    mvwprintw(pcWindow, 0, 0, "program");
+    for(char i = -27; i < 27; i++) {
+        if (i == 1) {
+            mvwprintw(pcWindow, 28, 1, "->");
+        }
+        mvwprintw(pcWindow, i + 28, 4, "%.3X %.2X%.2X", pc + i, memory[pc + i], memory[pc + i + 1]);
+    }
+    wrefresh(pcWindow);
 }
 
 bool Display::getPixel(unsigned char x, unsigned char y) {
