@@ -173,7 +173,7 @@ int CPU::run() {
                 // pc = (instruction & 0xFFF) + v[instruction & 0x0F00 >> 8];
                 break;
             case 0xC:
-                v[instruction & 0x0F00] = (rand() % (instruction & 0x00FF)) & (instruction & 0x00FF);
+                v[(instruction & 0x0F00) >> 8] = (rand() % ((instruction & 0x00FF) + 1)) & (instruction & 0x00FF);
                 break;
             case 0xD:
                 // TODO: move to function
@@ -273,6 +273,7 @@ int CPU::run() {
         display.printDebugInfo(v, memory.readMemoryContent(), pc);
 #endif
 
+        //std::this_thread::sleep_for(std::chrono::microseconds (1000000));
         std::this_thread::sleep_for(std::chrono::microseconds (3500));
     }
     timersRunning = false;

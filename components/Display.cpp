@@ -72,11 +72,11 @@ void Display::printDebugInfo(unsigned char *registers, unsigned char* memory, un
 
     // currently executed code
     mvwprintw(pcWindow, 0, 0, "program");
-    for(char i = -27; i < 27; i++) {
-        if (i == 1) {
+    for(char i = -54; i < 54; i += 2) {
+        if (i == 0) {
             mvwprintw(pcWindow, 28, 1, "->");
         }
-        mvwprintw(pcWindow, i + 28, 4, "%.3X %.2X%.2X", pc + i, memory[pc + i], memory[pc + i + 1]);
+        mvwprintw(pcWindow, (i/2) + 28, 4, "%.3X %.2X%.2X", pc + i, memory[pc + i], memory[pc + i + 1]);
     }
     wrefresh(pcWindow);
 }
