@@ -16,9 +16,11 @@ void CPU::loadProgram(std::string filepath) {
     std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(program), {});
 
     memory.write(buffer, 0x200);
-    //memory.printMemory();
     display.printScreenSDL();
+
+#ifdef DEBUG
     display.printDebugInfo(v, memory.readMemoryContent(), pc);
+#endif
 
 }
 
@@ -266,7 +268,11 @@ int CPU::run() {
                 sound.join();
                 return 1;
         }
+
+#ifdef DEBUG
         display.printDebugInfo(v, memory.readMemoryContent(), pc);
+#endif
+
         std::this_thread::sleep_for(std::chrono::microseconds (3500));
     }
     timersRunning = false;

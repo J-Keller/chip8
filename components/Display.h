@@ -5,7 +5,6 @@
 #ifndef CHIP8_DISPLAY_H
 #define CHIP8_DISPLAY_H
 
-
 #include <SDL.h>
 #include <ncurses.h>
 
@@ -17,20 +16,26 @@ public:
 
     void clearScreen();
     void printScreenSDL();
-    void printDebugInfo(unsigned char* registers, unsigned char* memory, unsigned short pc);
     bool getPixel(unsigned char, unsigned char);
     void setPixel(unsigned char, unsigned char, bool);
     bool getCollisionRight(unsigned char);
     bool getCollisionBottom(unsigned char);
+
+#ifdef DEBUG
+    void printDebugInfo(unsigned char* registers, unsigned char* memory, unsigned short pc);
+#endif
+
 protected:
 private:
 
+#ifdef DEBUG
     void initDebugStuff();
 
     // Debug Stuff
     WINDOW *registerWindow;
     WINDOW *memoryWindow;
     WINDOW *pcWindow;
+#endif
 
     // SDL Stuff
     SDL_Window *window;

@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Display.h"
 
-
+#ifdef DEBUG
 WINDOW *createNewWindow(int width, int height, int xPos, int yPos) {
     WINDOW *local_win;
 
@@ -24,47 +24,6 @@ void destroyWindow(WINDOW *window) {
     wborder(window, ' ', ' ', ' ',' ',' ',' ',' ',' ');
     wrefresh(window);
     delwin(window);
-}
-
-void Display::clearScreen() {
-    for(unsigned char y = 0; y < height; y++) {
-        for (unsigned char x = 0; x < width; x++) {
-            display[y][x] = 0b0;
-        }
-    }
-}
-
-void Display::printScreenSDL() {
-    SDL_SetRenderDrawColor(renderer, grid_background.r, grid_background.g,grid_background.b, grid_background.a);
-    SDL_RenderClear(renderer);
-
-    // Draw grid lines.
-    SDL_SetRenderDrawColor(renderer, grid_line_color.r, grid_line_color.g,grid_line_color.b, grid_line_color.a);
-
-    for (int x = 0; x < 1 + width * gridSize; x += gridSize) {
-        SDL_RenderDrawLine(renderer, x, 0, x, height * gridSize);
-    }
-
-    for (int y = 0; y < 1 + height * gridSize; y += gridSize) {
-        SDL_RenderDrawLine(renderer, 0, y, width * gridSize, y);
-    }
-
-    SDL_SetRenderDrawColor(renderer, grid_pixel_color.r, grid_pixel_color.g, grid_pixel_color.b, grid_pixel_color.a);
-    for(unsigned char y = 0; y < height; y++) {
-        for (unsigned char x = 0; x < width; x++) {
-            if (display[y][x]) {
-                SDL_Rect rect = {
-                        x * gridSize,
-                        y * gridSize,
-                        gridSize,
-                        gridSize
-                };
-                SDL_RenderFillRect(renderer, &rect);
-            }
-        }
-    }
-
-    SDL_RenderPresent(renderer);
 }
 
 void Display::initDebugStuff() {
@@ -121,6 +80,48 @@ void Display::printDebugInfo(unsigned char *registers, unsigned char* memory, un
     }
     wrefresh(pcWindow);
 }
+#endif
+
+void Display::clearScreen() {
+    for(unsigned char y = 0; y < height; y++) {
+        for (unsigned char x = 0; x < width; x++) {
+            display[y][x] = 0b0;
+        }
+    }
+}
+
+void Display::printScreenSDL() {
+    SDL_SetRenderDrawColor(renderer, grid_background.r, grid_background.g,grid_background.b, grid_background.a);
+    SDL_RenderClear(renderer);
+
+    // Draw grid lines.
+    SDL_SetRenderDrawColor(renderer, grid_line_color.r, grid_line_color.g,grid_line_color.b, grid_line_color.a);
+
+    for (int x = 0; x < 1 + width * gridSize; x += gridSize) {
+        SDL_RenderDrawLine(renderer, x, 0, x, height * gridSize);
+    }
+
+    for (int y = 0; y < 1 + height * gridSize; y += gridSize) {
+        SDL_RenderDrawLine(renderer, 0, y, width * gridSize, y);
+    }
+
+    SDL_SetRenderDrawColor(renderer, grid_pixel_color.r, grid_pixel_color.g, grid_pixel_color.b, grid_pixel_color.a);
+    for(unsigned char y = 0; y < height; y++) {
+        for (unsigned char x = 0; x < width; x++) {
+            if (display[y][x]) {
+                SDL_Rect rect = {
+                        x * gridSize,
+                        y * gridSize,
+                        gridSize,
+                        gridSize
+                };
+                SDL_RenderFillRect(renderer, &rect);
+            }
+        }
+    }
+
+    SDL_RenderPresent(renderer);
+}
 
 bool Display::getPixel(unsigned char x, unsigned char y) {
     return display[y][x];
@@ -139,12 +140,15 @@ bool Display::getCollisionBottom(unsigned char y) {
 }
 
 Display::Display() {
+
+#ifdef DEBUG
     // init ncurses
     initscr();
     cbreak();
     refresh();
 
     initDebugStuff();
+#endif
 
     // init SDL
     SDL_Init(SDL_INIT_VIDEO);
@@ -160,7 +164,9 @@ Display::~Display() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
+#ifdef DEBUG
     // destroy debug stuff
     destroyWindow(registerWindow);
     endwin();
+#endif
 }

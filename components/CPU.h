@@ -4,6 +4,7 @@
 
 #ifndef CHIP8_CPU_H
 #define CHIP8_CPU_H
+
 #include <stack>
 #include <string>
 #include <atomic>

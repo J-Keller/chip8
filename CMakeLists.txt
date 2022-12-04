@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 project(chip8)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_FLAGS "-DDEBUG")
 
 add_executable(chip8 main.cpp components/Memory.cpp components/Memory.h components/Display.cpp components/Display.h components/CPU.cpp components/CPU.h components/Input.cpp components/Input.h)
 
